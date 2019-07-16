@@ -9,11 +9,15 @@ import router from './router'
 import store from './store'
 
 import db from './db/db'
+import mapper from './db/mapper'
+import message from './common/message'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
-Vue.db = Vue.prototype.$db = db
+Vue.prototype.$db = db
+Vue.prototype.$mapper = mapper
+Vue.prototype.$msg = message
 
 Vue.use(ElementUI)
 

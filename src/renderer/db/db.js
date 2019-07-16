@@ -5,12 +5,16 @@ var sqlite3 = require('sqlite3').verbose()
 var db = new sqlite3.Database(file)
 
 db.insert = function (sql, params, callback) {
-  let stmt = db.prepare(sql, params, err => {
-    if (callback != null) {
-      callback(err)
+  db.run(sql, params, (err, data) => {
+    if (err != null) {
+      console.log(err)
+      alert(err)
+    } else if (callback != null) {
+      this.get('select last_insert_rowid()', {}, (err2, data) => {
+        callback(data['last_insert_rowid()'])
+      })
     }
   })
-  stmt.run()
 }
 
 db.query = function (sql, params, callback) {
@@ -30,7 +34,7 @@ db.exec = function (sql, params, callback) {
       console.log(err)
       alert(err)
     } else if (callback != null) {
-      callback(err)
+      callback()
     }
   })
 }
@@ -38,7 +42,7 @@ db.exec = function (sql, params, callback) {
 let createTableSqlScript = [
   'create table if not exists customer_group(' +
     'id integer primary key autoincrement,' +
-    'name text not null,' +
+    'label text not null,' +
     'parent_id integer)'
 ]
 
