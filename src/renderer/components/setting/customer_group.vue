@@ -8,16 +8,13 @@
     <span class="custom-tree-node" slot-scope="{ node, data }" style="width:100%">
       <span style="font-size:14px">{{ node.label }}</span>
       <span style="float:right">
-        <el-button
-          type="text"
-          size="mini"
-          @click="() => append(data)">
+        <el-button type="text" size="mini" @click="() => append(data)">
           Append
         </el-button>
-        <el-button
-          type="text"
-          size="mini"
-          @click="() => remove(node, data)">
+        <el-button type="text" size="mini" @click="() => edit(data)">
+          Edit
+        </el-button>
+        <el-button type="text" size="mini" @click="() => remove(node, data)">
           Delete
         </el-button>
       </span>
@@ -42,18 +39,23 @@ export default {
   methods: {
     getData () {
       this.$db.query('select * from customer_group', {}, rows => {
-        console.log(rows)
         this.convertToElTreeData(rows, this.data[0])
-        console.log(this.data)
       })
     },
     append (data) {
       this.$prompt('请输入分组名称', '提示')
         .then(name => {
           this.$db.insert(this.$mapper.customerGroupAdd, {'1': name.value, '2': data.id}, id => {
-            console.log(id)
             const newChild = { id: id, label: name.value, children: [] }
             data.children.push(newChild)
+          })
+        })
+    },
+    edit (data) {
+      this.$prompt('请输入分组名称', '提示')
+        .then(name => {
+          this.$db.exec(this.$mapper.customerGroupEdit, {'1': name.value, '2': data.id}, () => {
+            data.label = name.value
           })
         })
     },
