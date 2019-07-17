@@ -13,6 +13,8 @@ import mapper from './db/mapper'
 import message from './common/message'
 import util from './common/util'
 
+Vue.use(ElementUI)
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
@@ -20,8 +22,6 @@ Vue.prototype.$db = db
 Vue.prototype.$mapper = mapper
 Vue.prototype.$msg = message
 Vue.prototype.$util = util
-
-Vue.use(ElementUI)
 
 /* eslint-disable no-new */
 new Vue({
