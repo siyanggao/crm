@@ -46,8 +46,8 @@ let createTableSqlScript = [
     'parent_id integer)',
   'create table if not exists customer(' +
     'id integer primary key autoincrement,' +
-    'name text not null,' +
     'group_id integer not null,' +
+    'name text not null,' +
     'country text,' +
     'addr text,' +
     'create_time integer)'

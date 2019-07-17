@@ -1,6 +1,6 @@
 <template>
 <el-container>
-  <el-aside>
+  <el-aside style="width:150px">
     <el-tree
       :data="groupData"
       :expand-on-click-node="false"
@@ -9,7 +9,11 @@
     </el-tree>
   </el-aside>
   <el-main>
-    main
+    <el-table :data="tableData" border style="width:100%">
+      <el-table-column prop="name" label="名称" width="180"></el-table-column>
+      <el-table-column prop="country" label="国家" width="180"></el-table-column>
+    </el-table>
+    <el-button @click="add">add</el-button>
   </el-main>
 </el-container>
 </template>
@@ -17,6 +21,7 @@
 export default {
   data () {
     return {
+      tableData: [{name: 'q'}],
       groupData: [{
         id: 0,
         children: []
@@ -31,7 +36,8 @@ export default {
     getData (withSearch) {
       let ids = this.getChildIds(this.selectedGroup)
       this.$db.query(this.$mapper.customerSelect, {'1': ids}, rows => {
-        console.log(rows)
+        this.tableData = rows
+        console.log(this.tableData)
       })
     },
     selectGroupHandler (data) {
@@ -44,6 +50,9 @@ export default {
         this.groupData = this.groupData[0].children
         this.getData(false)
       })
+    },
+    add () {
+      this.$router.push({name: 'customerAddOrEdit', query: {addOrEdit: 0}})
     },
     convertToElTreeData (rows, parent) {
       rows.forEach(row => {

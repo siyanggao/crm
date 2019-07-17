@@ -11,12 +11,17 @@ export default new Router({
       component: require('@/components/home').default,
       children: [
         {
-          path: '/customer',
+          path: '',
           name: 'customer',
           component: require('@/components/customer/customer').default
         },
         {
-          path: '/setting/customer_group',
+          path: 'customerAddOrEdit',
+          name: 'customerAddOrEdit',
+          component: require('@/components/customer/customerAddOrEdit').default
+        },
+        {
+          path: 'setting/customer_group',
           name: 'setting_customer_group',
           component: require('@/components/setting/customer_group').default
         }
