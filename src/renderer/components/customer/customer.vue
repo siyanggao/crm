@@ -5,13 +5,15 @@
       :data="groupData"
       :expand-on-click-node="false"
       node-key="id"
-      @node-click="selectGroupHandler">
+      @node-click="selectGroupHandler"
+      :default-expanded-keys="[0]">
     </el-tree>
   </el-aside>
   <el-main>
-    <el-table :data="tableData" border style="width:100%">
+    <el-table :data="tableData" style="width:100%">
       <el-table-column prop="name" label="名称" width="180"></el-table-column>
       <el-table-column prop="country" label="国家" width="180"></el-table-column>
+      <el-table-column prop="addr" label="地址" width="180"></el-table-column>
     </el-table>
     <el-button @click="add">add</el-button>
   </el-main>
@@ -21,9 +23,10 @@
 export default {
   data () {
     return {
-      tableData: [{name: 'q'}],
+      tableData: [],
       groupData: [{
         id: 0,
+        label: '客户分组',
         children: []
       }],
       selectedGroup: ''
@@ -34,8 +37,10 @@ export default {
   },
   methods: {
     getData (withSearch) {
-      let ids = this.getChildIds(this.selectedGroup)
-      this.$db.query(this.$mapper.customerSelect, {'1': ids}, rows => {
+      let ids = this.getChildIds(this.selectedGroup).replace(/,$/gi, '')
+      let sql = this.$mapper.customerSelect.replace(/\?/, ids)
+      console.log(sql)
+      this.$db.query(sql, {}, rows => {
         this.tableData = rows
         console.log(this.tableData)
       })
@@ -47,7 +52,11 @@ export default {
     getGroupData () {
       this.$db.query('select * from customer_group', {}, rows => {
         this.convertToElTreeData(rows, this.groupData[0])
-        this.groupData = this.groupData[0].children
+        // this.groupData = this.groupData[0].children
+        // this.selectedGroup = {
+        //   children: this.groupData
+        // }
+        this.selectedGroup = this.groupData[0]
         this.getData(false)
       })
     },
@@ -67,13 +76,14 @@ export default {
       if (this.$util.isNull(parent)) {
         return
       }
-      let ids = parent.id + ','
+      let ids = this.$util.isNull(parent.id) ? '' : parent.id + ','
       if (!this.$util.isNull(parent.children)) {
         parent.children.forEach(item => {
           ids += this.getChildIds(item)
         })
       }
-      ids = ids.replace(/,$/gi, '')
+      // ids = ids.replace(/,$/gi, '')
+      // console.log(ids)
       return ids
     }
   }
