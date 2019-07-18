@@ -15,11 +15,11 @@
       <el-form-item prop="group_label">
         <el-input v-model="form.group_label" :disabled="true"></el-input>
       </el-form-item>
-      <el-button @click="selectGroupHandler" size="mini">选择</el-button>
+      <el-button @click="selectGroupHandler" size="mini" v-if="addOrEdit!==2">选择</el-button>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="onSubmit">立即创建</el-button>
-      <el-button @click="back">取消</el-button>
+      <el-button type="primary" @click="onSubmit" v-if="addOrEdit!==2">保存</el-button>
+      <el-button @click="back">返回</el-button>
     </el-form-item>
   </el-form>
   <el-dialog title="选择分组" :visible.sync="dialogVisiable">
@@ -32,6 +32,7 @@ import CustomerGroupSelect from '../customer_group_select'
 export default {
   data () {
     return {
+      addOrEdit: 0,
       form: {},
       dialogVisiable: false,
       rules: {
@@ -46,20 +47,40 @@ export default {
     }
   },
   mounted: function () {
+    this.addOrEdit = this.$route.query.addOrEdit
+    if (this.addOrEdit === 1) {
+      this.form = this.$route.query.data
+    }
+    if (this.addOrEdit === 2) {
+      this.form = this.$route.query.data
+    }
   },
   methods: {
     onSubmit () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          this.$db.insert(this.$mapper.customerAdd, {
-            '1': this.form.group_id,
-            '2': this.form.name,
-            '3': this.form.country,
-            '4': this.form.addr
-          }, id => {
-            this.$msg.succ()
-            this.$router.go(-1)
-          })
+          if (this.$util.isNull(this.form.id)) {
+            this.$db.insert(this.$mapper.customerAdd, {
+              '1': this.form.group_id,
+              '2': this.form.name,
+              '3': this.form.country,
+              '4': this.form.addr
+            }, id => {
+              this.$msg.succ()
+              this.$router.go(-1)
+            })
+          } else {
+            this.$db.exec(this.$mapper.customerEdit, {
+              '1': this.form.group_id,
+              '2': this.form.name,
+              '3': this.form.country,
+              '4': this.form.addr,
+              '5': this.form.id
+            }, () => {
+              this.$msg.succ()
+              this.$router.go(-1)
+            })
+          }
         }
       })
     },

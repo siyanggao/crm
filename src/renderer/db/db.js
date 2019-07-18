@@ -57,7 +57,6 @@ let initSqlScript = [
 ]
 
 createTableSqlScript.forEach(val => {
-  console.log(val)
   db.exec(val)
 })
 
