@@ -89,7 +89,7 @@ export default {
       this.getData(false)
     },
     getGroupData () {
-      this.$db.query('select * from customer_group', {}, rows => {
+      this.$db.query(this.$mapper.customerGroupSelect, {}, rows => {
         this.convertToElTreeData(rows, this.groupData[0])
         this.selectedGroup = this.groupData[0]
         this.getData()
@@ -99,13 +99,13 @@ export default {
       this.$router.push({name: 'customerAddOrEdit', query: {addOrEdit: 0}})
     },
     edit (data) {
-      this.$db.query(this.$mapper.customerGroupSelect, data.group_id, rows => {
+      this.$db.query(this.$mapper.customerGroupGet, data.group_id, rows => {
         data.group_label = rows[0].label
         this.$router.push({name: 'customerAddOrEdit', query: {addOrEdit: 1, data: data}})
       })
     },
     detail (data) {
-      this.$db.query(this.$mapper.customerGroupSelect, data.group_id, rows => {
+      this.$db.query(this.$mapper.customerGroupGet, data.group_id, rows => {
         data.group_label = rows[0].label
         this.$router.push({name: 'customerAddOrEdit', query: {addOrEdit: 2, data: data}})
       })

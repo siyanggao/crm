@@ -1,6 +1,7 @@
 let mapper = {}
 
-mapper.customerGroupSelect = 'select * from customer_group where id=?'
+mapper.customerGroupSelect = 'select * from customer_group'
+mapper.customerGroupGet = 'select * from customer_group where id=?'
 mapper.customerGroupAdd = 'insert into customer_group(label,parent_id) values(?,?)'
 mapper.customerGroupEdit = 'update customer_group set label=? where id=?'
 mapper.customerGroupDel = 'delete from customer_group where id=?'
