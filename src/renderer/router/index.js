@@ -21,9 +21,24 @@ export default new Router({
           component: require('@/components/customer/customerAddOrEdit').default
         },
         {
+          path: 'enquiry',
+          name: 'enquiry',
+          component: require('@/components/customer/enquiry').default
+        },
+        {
           path: 'setting/customer_group',
           name: 'setting_customer_group',
           component: require('@/components/setting/customer_group').default
+        },
+        {
+          path: 'setting/dict',
+          name: 'setting_dict',
+          component: require('@/components/setting/dict').default
+        },
+        {
+          path: 'setting/dictAddOrEdit',
+          name: 'setting_dictAddOrEdit',
+          component: require('@/components/setting/dictAddOrEdit').default
         }
       ]
     },

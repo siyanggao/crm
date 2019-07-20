@@ -50,6 +50,31 @@ let createTableSqlScript = [
     'name text not null,' +
     'country text,' +
     'addr text,' +
+    'company text,' +
+    'phone text,' +
+    'fox text,' +
+    'email text,' +
+    'postcode text,' +
+    'type integer,' +
+    'level integer,' +
+    'website text,' +
+    'introduce text,' +
+    'create_time integer)',
+  'create table if not exists dict(' +
+    'id integer primary key autoincrement,' +
+    'label text,' +
+    'type text,' +
+    'sequence integer)',
+  'create table if not exists enquiry(' +
+    'id integer primary key autoincrement,' +
+    'customer_id integer,' +
+    'content text,' +
+    'quote integer,' +
+    'create_time integer)',
+  'create table if not exists follow(' +
+    'id integer primary key autoincrement,' +
+    'enquiry_id integer,' +
+    'content text,' +
     'create_time integer)'
 ]
 

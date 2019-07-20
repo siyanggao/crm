@@ -22,11 +22,20 @@
       <el-table-column prop="name" label="名称" width="180"></el-table-column>
       <el-table-column prop="country" label="国家" width="180"></el-table-column>
       <el-table-column prop="addr" label="地址" width="180"></el-table-column>
+      <el-table-column prop="company" label="公司" width="180"></el-table-column>
+      <el-table-column prop="phone" label="电话" width="180"></el-table-column>
+      <el-table-column prop="fox" label="传真" width="180"></el-table-column>
+      <el-table-column prop="email" label="邮箱" width="180"></el-table-column>
+      <el-table-column prop="postcode" label="邮编" width="180"></el-table-column>
+      <el-table-column prop="type_label" label="客户类型" width="180"></el-table-column>
+      <el-table-column prop="level_label" label="客户级别" width="180"></el-table-column>
+      <el-table-column prop="website" label="公司网址" width="180"></el-table-column>
       <el-table-column
         label="操作"
         width="180">
         <template slot-scope="scope">
           <el-button @click="detail(scope.row)" type="text" size="small">查看</el-button>
+          <el-button @click="enquiry(scope.row)" type="text" size="small">询盘</el-button>
           <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
           <el-button @click="del(scope.row)" type="text" size="small" style="color:#f56c6c">删除</el-button>
         </template>
@@ -79,9 +88,12 @@ export default {
       this.$db.query(sql.replace(/fields/, 'count(*) as count'), [1000000, 0], rows => {
         this.totalLength = rows[0].count
       })
-      this.$db.query(sql.replace(/fields/, '*'), [this.limit, this.page * this.limit], rows => {
+      this.$db.query(sql.replace(/fields/, 'customer.*,t2.label as type_label,t3.label as level_label'), [this.limit, this.page * this.limit], rows => {
         this.tableData = rows
       })
+    },
+    enquiry (data) {
+      this.$router.push({name: 'enquiry', query: {customerId: data.id}})
     },
     selectGroupHandler (data) {
       this.selectedGroup = data

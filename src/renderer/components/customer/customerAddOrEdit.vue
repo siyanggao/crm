@@ -17,6 +17,23 @@
       </el-form-item>
       <el-button @click="selectGroupHandler" size="mini" v-if="addOrEdit!==2">选择</el-button>
     </el-form-item>
+    <el-form-item label="公司"><el-input v-model="form.company"></el-input></el-form-item>
+    <el-form-item label="电话"><el-input v-model="form.phone"></el-input></el-form-item>
+    <el-form-item label="传真"><el-input v-model="form.fox"></el-input></el-form-item>
+    <el-form-item label="邮箱"><el-input v-model="form.email"></el-input></el-form-item>
+    <el-form-item label="邮编"><el-input v-model="form.postcode"></el-input></el-form-item>
+    <el-form-item label="客户类型">
+      <el-select v-model="form.type" placeholder="请选择客户类型">
+        <el-option v-for="item in typeOption" :key="item.id" :value="item.id" :label="item.label"></el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="客户级别">
+      <el-select v-model="form.level" placeholder="请选择客户级别">
+        <el-option v-for="item in levelOption" :key="item.id" :value="item.id" :label="item.label"></el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="公司网址"><el-input v-model="form.website"></el-input></el-form-item>
+    <el-form-item label="简介"><el-input type="textarea" v-model="form.introduce"></el-input></el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSubmit" v-if="addOrEdit!==2">保存</el-button>
       <el-button @click="back">返回</el-button>
@@ -35,6 +52,8 @@ export default {
       addOrEdit: 0,
       form: {},
       dialogVisiable: false,
+      typeOption: [],
+      levelOption: [],
       rules: {
         name: [
           { required: true, message: '请输入客户名称', trigger: 'blur' },
@@ -54,29 +73,28 @@ export default {
     if (this.addOrEdit === 2) {
       this.form = this.$route.query.data
     }
+    this.getType()
+    this.getLevel()
   },
   methods: {
     onSubmit () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           if (this.$util.isNull(this.form.id)) {
-            this.$db.insert(this.$mapper.customerAdd, {
-              '1': this.form.group_id,
-              '2': this.form.name,
-              '3': this.form.country,
-              '4': this.form.addr
-            }, id => {
+            this.$db.insert(this.$mapper.customerAdd, [
+              this.form.group_id, this.form.name, this.form.country, this.form.addr, this.form.company,
+              this.form.phone, this.form.fox, this.form.email, this.form.postcode, this.form.type,
+              this.form.level, this.form.website, this.form.introduce
+            ], id => {
               this.$msg.succ()
               this.$router.go(-1)
             })
           } else {
-            this.$db.exec(this.$mapper.customerEdit, {
-              '1': this.form.group_id,
-              '2': this.form.name,
-              '3': this.form.country,
-              '4': this.form.addr,
-              '5': this.form.id
-            }, () => {
+            this.$db.exec(this.$mapper.customerEdit, [
+              this.form.group_id, this.form.name, this.form.country, this.form.addr, this.form.company,
+              this.form.phone, this.form.fox, this.form.email, this.form.postcode, this.form.type,
+              this.form.level, this.form.website, this.form.introduce, this.form.id
+            ], () => {
               this.$msg.succ()
               this.$router.go(-1)
             })
@@ -94,6 +112,16 @@ export default {
     },
     back () {
       this.$router.go(-1)
+    },
+    getType () {
+      this.$db.query(this.$mapper.dictSelectByType, 'customer_type', rows => {
+        this.typeOption = rows
+      })
+    },
+    getLevel () {
+      this.$db.query(this.$mapper.dictSelectByType, 'customer_level', rows => {
+        this.levelOption = rows
+      })
     }
   },
   components: {

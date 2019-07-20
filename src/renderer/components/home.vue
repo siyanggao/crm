@@ -6,6 +6,7 @@
       <el-submenu index="setting">
         <template slot="title">设置</template>
         <el-menu-item index="/setting/customer_group">客户分组</el-menu-item>
+        <el-menu-item index="/setting/dict">字典</el-menu-item>
       </el-submenu>
     </el-menu>
   </el-header>
