@@ -31,6 +31,7 @@
       <el-table-column prop="level_label" label="客户级别" width="180"></el-table-column>
       <el-table-column prop="website" label="公司网址" width="180"></el-table-column>
       <el-table-column
+        fixed="right"
         label="操作"
         width="180">
         <template slot-scope="scope">

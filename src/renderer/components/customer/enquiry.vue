@@ -11,7 +11,7 @@
     <el-form-item label="跟进3"><el-input type="textarea" v-model="follow.follow2.content"></el-input></el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSubmit">保存</el-button>
-      <el-button @click="this.$router.go(-1)">返回</el-button>
+      <el-button @click="back">返回</el-button>
     </el-form-item>
   </el-form>
 </div>
@@ -89,6 +89,9 @@ export default {
           })
         }
       })
+    },
+    back () {
+      this.$router.go(-1)
     }
   }
 }
