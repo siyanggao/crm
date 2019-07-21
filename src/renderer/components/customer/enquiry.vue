@@ -35,19 +35,24 @@ export default {
   },
   methods: {
     onSubmit () {
-      let time = new Date().getTime()
       if (this.$util.isNull(this.enquiry.id)) {
         this.$db.insert(this.$mapper.enquiryAdd, [this.customerId, this.enquiry.content,
-          this.enquiry.quote, time], id => {
+          this.enquiry.quote, new Date().getTime()], id => {
+          this.enquiry.id = id
+          this.followSubmit()
           this.$msg.succ()
           this.$router.go(-1)
         })
       } else {
-        this.$db.exec(this.$mapper.enquiryEdit, [this.enquiry.content, this.enquiry.quote, this.enquiry.id], id => {
+        this.$db.exec(this.$mapper.enquiryEdit, [this.enquiry.content, this.enquiry.quote, this.enquiry.id], () => {
+          this.followSubmit()
           this.$msg.succ()
           this.$router.go(-1)
         })
       }
+    },
+    followSubmit () {
+      let time = new Date().getTime()
       if (!this.$util.isNull(this.follow.follow0)) {
         if (this.$util.isNull(this.follow.follow0.id)) {
           this.$db.insert(this.$mapper.followAdd, [this.enquiry.id, this.follow.follow0.content, time++])
