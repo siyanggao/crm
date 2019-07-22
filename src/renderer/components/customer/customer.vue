@@ -70,7 +70,10 @@ export default {
     }
   },
   mounted: function () {
-    this.getGroupData()
+    this.dbIsInit()
+      .then(() => {
+        this.getGroupData()
+      })
   },
   methods: {
     getData () {
@@ -158,6 +161,17 @@ export default {
       // ids = ids.replace(/,$/gi, '')
       // console.log(ids)
       return ids
+    },
+    dbIsInit () {
+      let p = new Promise((resolve, reject) => {
+        let id = setInterval(() => {
+          if (this.$db.hasInit) {
+            clearInterval(id)
+            resolve()
+          }
+        }, 10)
+      })
+      return p
     }
   }
 }

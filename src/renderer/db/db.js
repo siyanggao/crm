@@ -1,9 +1,57 @@
 var fs = require('fs')
-var file = 'test.db'
+var file = 'data.db'
 fs.existsSync(file)
 var sqlite3 = require('sqlite3').verbose()
 var db = new sqlite3.Database(file)
 
+db.insert = function (sql, params) {
+  let p = new Promise((resolve, reject) => {
+    db.run(sql, params, (err, data) => {
+      if (err != null) {
+        console.log(err)
+        alert(err)
+        reject(err)
+      } else {
+        this.get('select last_insert_rowid()', {}, (err2, data) => {
+          resolve(data['last_insert_rowid()'])
+        })
+      }
+    })
+  })
+  return p
+}
+
+db.query = function (sql, params) {
+  let p = new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err != null) {
+        console.log(err)
+        alert(err)
+        reject(err)
+      } else {
+        resolve(rows)
+      }
+    })
+  })
+  return p
+}
+
+db.exec = function (sql, params) {
+  let p = new Promise((resolve, reject) => {
+    db.run(sql, params, err => {
+      if (err != null) {
+        console.log(err)
+        alert(err)
+        reject(err)
+      } else {
+        resolve()
+      }
+    })
+  })
+  return p
+}
+
+/** **********************deprecated**********************  **/
 db.insert = function (sql, params, callback) {
   db.run(sql, params, (err, data) => {
     if (err != null) {
@@ -16,7 +64,6 @@ db.insert = function (sql, params, callback) {
     }
   })
 }
-
 db.query = function (sql, params, callback) {
   db.all(sql, params, (err, rows) => {
     if (err != null) {
@@ -27,17 +74,21 @@ db.query = function (sql, params, callback) {
     }
   })
 }
-
 db.exec = function (sql, params, callback) {
-  db.run(sql, params, err => {
-    if (err != null) {
-      console.log(err)
-      alert(err)
-    } else if (callback != null) {
-      callback()
-    }
+  let p = new Promise((resolve, reject) => {
+    db.run(sql, params, err => {
+      resolve()
+      if (err != null) {
+        console.log(err)
+        alert(err)
+      } else if (callback != null) {
+        callback()
+      }
+    })
   })
+  return p
 }
+/** **********************deprecated end**********************  **/
 
 let createTableSqlScript = [
   'create table if not exists customer_group(' +
@@ -81,8 +132,14 @@ let createTableSqlScript = [
 let initSqlScript = [
 ]
 
-createTableSqlScript.forEach(val => {
-  db.exec(val)
+let p = Promise.resolve(true)
+createTableSqlScript.map(val => {
+  p = p.then(() => {
+    return db.exec(val)
+  })
+})
+p.then(() => {
+  db.hasInit = true
 })
 
 initSqlScript.forEach(val => {
