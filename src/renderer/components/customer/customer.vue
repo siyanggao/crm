@@ -11,24 +11,27 @@
   </el-aside>
   <el-main>
     <el-form :inline="true" :model="search" ref="form" :hide-required-asterisk="true" class="demo-form-inline">
-      <el-form-item label="客户名称">
-        <el-input v-model="search.name"></el-input>
+      <el-form-item label="客户名称"><el-input v-model="search.name"></el-input></el-form-item>
+      <el-form-item label="国家"><el-input v-model="search.country"></el-input></el-form-item>
+      <el-form-item label="邮箱"><el-input v-model="search.email"></el-input></el-form-item>
+      <el-form-item label="客户级别">
+        <el-select v-model="search.level" placeholder="请选择客户级别" clearable>
+          <el-option v-for="item in levelOption" :key="item.id" :value="item.id" :label="item.label"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="withSearch=true;getData()">查询</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="tableData" style="width:100%">
+      <el-table-column type="index" label="序号" min-width="50"></el-table-column>
+      <el-table-column prop="level_label" label="客户级别" min-width="100"></el-table-column>
       <el-table-column prop="name" label="名称" width="180"></el-table-column>
       <el-table-column prop="country" label="国家" width="180"></el-table-column>
+      <el-table-column prop="email" label="邮箱" width="180"></el-table-column>
       <el-table-column prop="addr" label="地址" width="180"></el-table-column>
       <el-table-column prop="company" label="公司" width="180"></el-table-column>
-      <el-table-column prop="phone" label="电话" width="180"></el-table-column>
-      <el-table-column prop="fox" label="传真" width="180"></el-table-column>
-      <el-table-column prop="email" label="邮箱" width="180"></el-table-column>
-      <el-table-column prop="postcode" label="邮编" width="180"></el-table-column>
-      <el-table-column prop="type_label" label="客户类型" width="180"></el-table-column>
-      <el-table-column prop="level_label" label="客户级别" width="180"></el-table-column>
+      <el-table-column prop="phone" label="电话传真" width="180"></el-table-column>
       <el-table-column prop="website" label="公司网址" width="180"></el-table-column>
       <el-table-column
         fixed="right"
@@ -66,13 +69,15 @@ export default {
       limit: 10,
       totalLength: 0,
       search: {},
-      withSearch: false
+      withSearch: false,
+      levelOption: []
     }
   },
   mounted: function () {
     this.dbIsInit()
       .then(() => {
         this.getGroupData()
+        this.getLevel()
       })
   },
   methods: {
@@ -82,17 +87,23 @@ export default {
       let condition = ''
       if (this.withSearch) {
         if (!this.$util.isNull(this.search.name)) {
-          condition += 'name like "%' + this.search.name + '%" '
+          condition += 'and name like "%' + this.search.name + '%" '
         }
-        if (!this.$util.isNull(condition)) {
-          condition = 'and ' + condition
+        if (!this.$util.isNull(this.search.country)) {
+          condition += 'and country like "%' + this.search.country + '%" '
+        }
+        if (!this.$util.isNull(this.search.email)) {
+          condition += 'and email like "%' + this.search.email + '%" '
+        }
+        if (!this.$util.isNull(this.search.level)) {
+          condition += 'and level =' + this.search.level + ' '
         }
       }
       sql = sql.replace(/condition/, condition)
       this.$db.query(sql.replace(/fields/, 'count(*) as count'), [1000000, 0], rows => {
         this.totalLength = rows[0].count
       })
-      this.$db.query(sql.replace(/fields/, 'customer.*,t2.label as type_label,t3.label as level_label'), [this.limit, this.page * this.limit], rows => {
+      this.$db.query(sql.replace(/fields/, 'customer.*,t3.label as level_label'), [this.limit, this.page * this.limit], rows => {
         this.tableData = rows
       })
     },
@@ -172,6 +183,11 @@ export default {
         }, 10)
       })
       return p
+    },
+    getLevel () {
+      this.$db.query(this.$mapper.dictSelectByType, 'customer_level', rows => {
+        this.levelOption = rows
+      })
     }
   }
 }

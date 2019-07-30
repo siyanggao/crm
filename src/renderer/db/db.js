@@ -103,10 +103,7 @@ let createTableSqlScript = [
     'addr text,' +
     'company text,' +
     'phone text,' +
-    'fox text,' +
     'email text,' +
-    'postcode text,' +
-    'type integer,' +
     'level integer,' +
     'website text,' +
     'introduce text,' +

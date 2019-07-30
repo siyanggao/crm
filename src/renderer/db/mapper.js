@@ -7,11 +7,10 @@ mapper.customerGroupEdit = 'update customer_group set label=? where id=?'
 mapper.customerGroupDel = 'delete from customer_group where id=?'
 
 mapper.customerSelect = 'select fields from customer ' +
-  'left join dict t2 on customer.type=t2.id ' +
   'left join dict t3 on customer.level=t3.id ' +
   'where group_id in (ids) condition order by customer.id desc limit ? offset ?'
-mapper.customerAdd = 'insert into customer(group_id,name,country,addr,company,phone,fox,email,postcode,type,level,website,introduce) values (?,?,?,?,?,?,?,?,?,?,?,?,?)'
-mapper.customerEdit = 'update customer set group_id=?,name=?,country=?,addr=?,company=?,phone=?,fox=?,email=?,postcode=?,type=?,level=?,website=?,introduce=? where id=?'
+mapper.customerAdd = 'insert into customer(group_id,name,country,addr,company,phone,email,level,website,introduce) values (?,?,?,?,?,?,?,?,?,?)'
+mapper.customerEdit = 'update customer set group_id=?,name=?,country=?,addr=?,company=?,phone=?,email=?,level=?,website=?,introduce=? where id=?'
 mapper.customerDel = 'delete from customer where id=?'
 
 mapper.dictSelect = 'select * from dict'
